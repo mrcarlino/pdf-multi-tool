@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import subprocess
 import sys
 import ctypes
 import threading
@@ -568,7 +569,7 @@ class PDFFlipperApp:
 
     def setup_ui(self):
         # Main container with padding
-        main_frame = tk.Frame(self.root, bg=self.BG_COLOR, padx=20, pady=20)
+        main_frame = tk.Frame(self.root, bg=self.BG_COLOR, padx=20, pady=12)
         main_frame.pack(fill="both", expand=True)
 
         # 55/45 Grid Configuration
@@ -604,41 +605,41 @@ class PDFFlipperApp:
 
         # 2. Custom Tabs Bar
         self.tab_frame = tk.Frame(left_panel, bg=self.BG_COLOR)
-        self.tab_frame.pack(fill="x", pady=(0, 15))
+        self.tab_frame.pack(fill="x", pady=(0, 8))
         
         self.merge_tab_btn = tk.Button(
             self.tab_frame, text="🔗 Merge PDFs", command=lambda: self.switch_tab("merge"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         self.split_tab_btn = tk.Button(
             self.tab_frame, text="✂️ Split PDF", command=lambda: self.switch_tab("split"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         self.reorder_tab_btn = tk.Button(
             self.tab_frame, text="🔄 Reorder Pages", command=lambda: self.switch_tab("reorder"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         self.flip_tab_btn = tk.Button(
             self.tab_frame, text="↔️ Transform PDF", command=lambda: self.switch_tab("transform"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         self.img_to_pdf_tab_btn = tk.Button(
             self.tab_frame, text="🖼️ Images to PDF", command=lambda: self.switch_tab("img_to_pdf"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         self.compress_tab_btn = tk.Button(
             self.tab_frame, text="🗜️ Compress PDF", command=lambda: self.switch_tab("compress"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         self.edit_tab_btn = tk.Button(
             self.tab_frame, text="✍️ Sign & Redact", command=lambda: self.switch_tab("edit"),
-            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=8, cursor="hand2"
+            bd=0, relief="flat", font=(self.font_family, 10, "bold"), padx=8, pady=5, cursor="hand2"
         )
 
         # Two rows of equal-width tabs so the left panel stays narrow
@@ -692,7 +693,7 @@ class PDFFlipperApp:
         
         # Custom modern progress bar
         self.progress_bar = ModernProgressBar(bottom_frame, bg_color=self.INPUT_BG, fill_color=self.ACCENT_COLOR)
-        self.progress_bar.pack(fill="x", pady=(0, 15))
+        self.progress_bar.pack(fill="x", pady=(0, 8))
         
         # Action Button row
         action_row = tk.Frame(bottom_frame, bg=self.BG_COLOR)
@@ -1201,7 +1202,7 @@ class PDFFlipperApp:
 
     def build_reorder_ui(self):
         # 1. File Selection Card Frame
-        reorder_file_card = tk.Frame(self.reorder_content_frame, bg=self.CARD_COLOR, padx=15, pady=15)
+        reorder_file_card = tk.Frame(self.reorder_content_frame, bg=self.CARD_COLOR, padx=15, pady=10)
         reorder_file_card.pack(fill="x", pady=(0, 15))
         
         reorder_file_header = tk.Label(
@@ -1239,7 +1240,7 @@ class PDFFlipperApp:
         self.reorder_details_lbl.pack(anchor="w", pady=(6, 0))
 
         # 2. Reordering Workspace Card Frame (Page list + operations)
-        workspace_card = tk.Frame(self.reorder_content_frame, bg=self.CARD_COLOR, padx=15, pady=15)
+        workspace_card = tk.Frame(self.reorder_content_frame, bg=self.CARD_COLOR, padx=15, pady=10)
         workspace_card.pack(fill="both", expand=True, pady=(0, 15))
         
         list_header = tk.Label(
@@ -1277,57 +1278,58 @@ class PDFFlipperApp:
         reorder_btn_frame = tk.Frame(list_btn_row, bg=self.CARD_COLOR)
         reorder_btn_frame.pack(side="right", fill="y")
         
+        reorder_btn_frame.columnconfigure((0, 1), weight=1, uniform="rb")
         self.reorder_up_btn = self.create_button(
             reorder_btn_frame, text="⬆️ Move Up", command=lambda: self.move_reorder_page(-1),
             bg_color=self.CARD_COLOR, fg_color=self.TEXT_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_up_btn.pack(fill="x", pady=(0, 5))
+        self.reorder_up_btn.grid(row=0, column=0, sticky="ew", padx=(0, 3), pady=3)
         
         self.reorder_down_btn = self.create_button(
             reorder_btn_frame, text="⬇️ Move Down", command=lambda: self.move_reorder_page(1),
             bg_color=self.CARD_COLOR, fg_color=self.TEXT_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_down_btn.pack(fill="x", pady=(0, 15))
+        self.reorder_down_btn.grid(row=0, column=1, sticky="ew", padx=(3, 0), pady=3)
         
         # Page-specific transformation buttons
         self.reorder_rot_ccw_btn = self.create_button(
             reorder_btn_frame, text="↩️ Rotate CCW", command=lambda: self.transform_selected_page("rot_ccw"),
             bg_color=self.CARD_COLOR, fg_color=self.TEXT_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_rot_ccw_btn.pack(fill="x", pady=(0, 5))
+        self.reorder_rot_ccw_btn.grid(row=1, column=0, sticky="ew", padx=(0, 3), pady=3)
         
         self.reorder_rot_cw_btn = self.create_button(
             reorder_btn_frame, text="↪️ Rotate CW", command=lambda: self.transform_selected_page("rot_cw"),
             bg_color=self.CARD_COLOR, fg_color=self.TEXT_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_rot_cw_btn.pack(fill="x", pady=(0, 5))
+        self.reorder_rot_cw_btn.grid(row=1, column=1, sticky="ew", padx=(3, 0), pady=3)
         
         self.reorder_flip_h_btn = self.create_button(
             reorder_btn_frame, text="↔️ Flip Horiz", command=lambda: self.transform_selected_page("flip_h"),
             bg_color=self.CARD_COLOR, fg_color=self.TEXT_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_flip_h_btn.pack(fill="x", pady=(0, 5))
+        self.reorder_flip_h_btn.grid(row=2, column=0, sticky="ew", padx=(0, 3), pady=3)
 
         self.reorder_flip_v_btn = self.create_button(
             reorder_btn_frame, text="↕️ Flip Vert", command=lambda: self.transform_selected_page("flip_v"),
             bg_color=self.CARD_COLOR, fg_color=self.TEXT_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_flip_v_btn.pack(fill="x", pady=(0, 15))
+        self.reorder_flip_v_btn.grid(row=2, column=1, sticky="ew", padx=(3, 0), pady=3)
         
         self.reorder_delete_btn = self.create_button(
             reorder_btn_frame, text="🗑️ Delete Page", command=self.delete_selected_page,
             bg_color=self.CARD_COLOR, fg_color=self.ERROR_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_delete_btn.pack(fill="x", pady=(0, 5))
+        self.reorder_delete_btn.grid(row=3, column=0, sticky="ew", padx=(0, 3), pady=3)
         
         self.reorder_reset_btn = self.create_button(
             reorder_btn_frame, text="🧹 Reset Order", command=self.reset_reorder_pages,
             bg_color=self.CARD_COLOR, fg_color=self.ERROR_COLOR, hover_color=self.INPUT_BORDER
         )
-        self.reorder_reset_btn.pack(fill="x")
+        self.reorder_reset_btn.grid(row=3, column=1, sticky="ew", padx=(3, 0), pady=3)
         
         # 3. Save Destination Card Frame
-        reorder_save_card = tk.Frame(self.reorder_content_frame, bg=self.CARD_COLOR, padx=15, pady=15)
+        reorder_save_card = tk.Frame(self.reorder_content_frame, bg=self.CARD_COLOR, padx=15, pady=10)
         reorder_save_card.pack(fill="x")
         
         reorder_save_header = tk.Label(
@@ -1978,6 +1980,10 @@ class PDFFlipperApp:
                     self.action_btn.config(state="disabled")
                     self.status_message.set("Specify a save destination.")
                     self.status_lbl.config(fg=self.MUTED_COLOR)
+            elif self.reorder_pdf_pages == 0:
+                self.action_btn.config(state="disabled")
+                self.status_message.set("Select a PDF file to begin.")
+                self.status_lbl.config(fg=self.MUTED_COLOR)
             else:
                 self.action_btn.config(state="disabled")
                 self.status_message.set("All pages deleted. Reset order to restore.")
@@ -2588,10 +2594,10 @@ class PDFFlipperApp:
                     savings = old_size - new_size
                     savings_pct = (savings / old_size) * 100 if old_size > 0 else 0
                     
-                    old_mb = old_size / (1024 * 1024)
-                    new_mb = new_size / (1024 * 1024)
+                    old_txt = format_file_size(old_size)
+                    new_txt = format_file_size(new_size)
                     
-                    status_text = f"Success! Compressed from {old_mb:.2f} MB to {new_mb:.2f} MB ({savings_pct:.1f}% savings)"
+                    status_text = f"Success! Compressed from {old_txt} to {new_txt} ({savings_pct:.1f}% savings)"
                     self.status_message.set(status_text)
                     self.status_lbl.config(fg=self.SUCCESS_COLOR)
                     
@@ -2601,8 +2607,8 @@ class PDFFlipperApp:
                     messagebox.showinfo(
                         "Success", 
                         f"Compression complete!\n\n"
-                        f"Original Size: {old_mb:.2f} MB\n"
-                        f"Compressed Size: {new_mb:.2f} MB\n"
+                        f"Original Size: {old_txt}\n"
+                        f"Compressed Size: {new_txt}\n"
                         f"Savings: {savings_pct:.1f}%\n\n"
                         f"Saved to:\n{result}"
                     )
@@ -2656,9 +2662,12 @@ class PDFFlipperApp:
             dir_path = out_path if self.current_tab == "split" else os.path.dirname(os.path.abspath(out_path))
             if os.path.exists(dir_path):
                 try:
-                    os.startfile(dir_path)
-                except Exception as e:
-                    messagebox.showerror("Error", f"Could not open directory:\n{str(e)}")
+                    if sys.platform == "win32":
+                        os.startfile(dir_path)
+                    else:
+                        subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", dir_path])
+                except Exception:
+                    messagebox.showinfo("Output Folder", f"Saved in:\n{dir_path}")
 
     def build_img_to_pdf_ui(self):
         """Construct the Images to PDF tab workspace layout."""
@@ -3039,9 +3048,8 @@ class PDFFlipperApp:
                 self.compress_pdf_pages = len(doc)
                 doc.close()
                 self.compress_pdf_size_bytes = os.path.getsize(file_path)
-                size_mb = self.compress_pdf_size_bytes / (1024 * 1024)
                 self.comp_info_lbl.config(
-                    text=f"Loaded: {self.compress_pdf_pages} pages | Original size: {size_mb:.2f} MB",
+                    text=f"Loaded: {self.compress_pdf_pages} pages | Original size: {format_file_size(self.compress_pdf_size_bytes)}",
                     fg=self.TEXT_COLOR
                 )
                 # Auto set save destination
