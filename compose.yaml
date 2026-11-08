@@ -1,0 +1,11 @@
+services:
+  pdf-multi-tool:
+    build: .
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+      WAYLAND_DISPLAY: ${WAYLAND_DISPLAY:-wayland-0}
+      XDG_RUNTIME_DIR: /mnt/wslg/runtime-dir
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+      - .:/data
